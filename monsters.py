@@ -6,43 +6,40 @@ from random import choice
 class Monster(object):
     def __init__(self):
         self.nicks = ["MONSTER", "A_MONSTER", "BASIC_MONSTER"]
-        self.nick = self.nicks[0]
+        self.name = self.nicks[0]
         self.health = 50
         self.damage = 10
         self.xp = 1
         self.targets = []
 
     def say(self, text):
-        print('{} says, "{}"'.format(self.nick, text))
+        print('< {}> {}'.format(self.name, text))
 
     def do(self, act):
-        print("{} {}".format(self.nick, act))
+        print("* {} {}".format(self.name, act))
 
     def idle(self):
         self.do("stands around looking menacing.")
 
     def auto(self):
-        if not targets:
+        if not self.targets:
             return
-        target = choice(targets)
+        target = choice(self.targets)
         self.show_attack(target)
-        target.hit(self.damage)
 
     def show_attack(self, target):
-        self.do("punches {}.".format(target.nick))
+        self.do("punches {}.".format(target.name))
 
     def hit(self, origin, damage):
-        if origin not in targets:
-            targets.append(origin)
-        self.say("Arrrrrrgh!")
-        self.do("dies.")
+        if origin not in self.targets:
+            self.targets.append(origin)
         self.health -= damage
         if self.health < 0:
             self.die()
             return True
         else:
             self.show_hit()
-        return False
+            return False
 
     def show_hit(self):
         self.say("Ow!")

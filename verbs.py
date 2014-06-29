@@ -2,16 +2,32 @@
 
 from random import randrange
 
-def basic_attack(player, stat):
-    if randrange(100) < getattr(player, stat):
-        try:
-            return getattr(player.equipment.weapon, stat) + 10
-        except AttributeError:
-            return 10
-    return 0
 
-def punch(player):
-    return basic_attack(player, "fight")
+class Verb(object):
+    name = None
+    s = None
 
-def zap(player):
-    return basic_attack(player, "cast")
+    def __init__(self, player):
+        self.player = player
+
+    def do(self):
+        raise NotImplementedError
+
+
+class BasicAttack(Verb):
+    def do(self):
+        if randrange(100) < getattr(self.player, self.stat):
+            return max(1, 10 + self.player.modifiers(stat))
+        return 0
+
+
+def Punch(BasicAttack):
+    def __init__(self, *args, **kwargs):
+        super(BasicAttack, self).__init__(*args, **kwargs)
+        self.stat = "fight"
+
+
+def Zap(BasicAttack):
+    def __init__(self, *args, **kwargs):
+        super(BasicAttack, self).__init__(*args, **kwargs)
+        self.stat = "cast"

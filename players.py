@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from verbs import punch, zap
+from verbs import Punch, Zap
 
 
 class Player(object):
@@ -10,6 +10,8 @@ class Player(object):
         self.target = None
         self.xp = 0
         self.roll_stats()
+        self.equipment = {"head": None, "torso": None,
+                          "weapon": None, "legs": None}
 
     def roll_stats(self):
         self.fight = 50
@@ -19,11 +21,29 @@ class Player(object):
         self.full_health = 100
         self.health = 100
 
+    def modifiers(self, stat):
+        modifier = 0
+        for slot in ["head", "torso", "weapon", "legs"]:
+            try:
+                modifier += getattr(self.equipment[slot], stat, 0)
+            except KeyError:
+                pass
+        return modifier
+
+    def say(self, text):
+        print('< {}> {}'.format(self.name, text))
+
+    def do(self, act):
+        print("* {} {}".format(self.name, act))
+
     def auto(self):
-        if self.target:
-            damage = self.basic(self)
+        if self.target and self.basic:
+            damage = self.basic.do()
             if damage:
+                self.do("{}s {}.".format(self.basic.s, self.target.name))
                 self.target.hit(self, damage)
+            else:
+                self.do("misses {}.".format(self.target.name))
 
     def hit(self, origin, damage):
         self.health -= damage
@@ -31,7 +51,7 @@ class Player(object):
 class Fighter(Player):
     def __init__(self, *args, **kwargs):
         super(Fighter, self).__init__(*args, **kwargs)
-        self.basic = punch
+        self.basic = Punch(self)
 
     def roll_stats(self):
         super(Fighter, self).roll_stats()
@@ -43,7 +63,7 @@ class Fighter(Player):
 class Wizard(Player):
     def __init__(self, *args, **kwargs):
         super(Wizard, self).__init__(*args, **kwargs)
-        self.basic = zap
+        self.basic = Zap(self)
 
     def roll_stats(self):
         super(Wizard, self).roll_stats()
@@ -55,7 +75,7 @@ class Wizard(Player):
 class Thief(Player):
     def __init__(self, *args, **kwargs):
         super(Thief, self).__init__(*args, **kwargs)
-        self.basic = punch
+        self.basic = Punch(self)
 
     def roll_stats(self):
         super(Thief, self).roll_stats()
@@ -67,7 +87,7 @@ class Thief(Player):
 class Cleric(Player):
     def __init__(self, *args, **kwargs):
         super(Cleric, self).__init__(*args, **kwargs)
-        self.basic = zap
+        self.basic = Zap(self)
 
     def roll_stats(self):
         super(Cleric, self).roll_stats()
