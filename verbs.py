@@ -17,17 +17,21 @@ class Verb(object):
 class BasicAttack(Verb):
     def do(self):
         if randrange(100) < getattr(self.player, self.stat):
-            return max(1, 10 + self.player.modifiers(stat))
+            return max(1, 10 + self.player.modifiers(self.stat))
         return 0
 
 
-def Punch(BasicAttack):
+class Punch(BasicAttack):
     def __init__(self, *args, **kwargs):
-        super(BasicAttack, self).__init__(*args, **kwargs)
+        super(Punch, self).__init__(*args, **kwargs)
         self.stat = "fight"
+        self.name = "punch"
+        self.s = "punches"
 
 
-def Zap(BasicAttack):
+class Zap(BasicAttack):
     def __init__(self, *args, **kwargs):
-        super(BasicAttack, self).__init__(*args, **kwargs)
+        super(Zap, self).__init__(*args, **kwargs)
         self.stat = "cast"
+        self.name = "zap"
+        self.s = "zaps"

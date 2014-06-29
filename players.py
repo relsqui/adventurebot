@@ -40,7 +40,7 @@ class Player(object):
         if self.target and self.basic:
             damage = self.basic.do()
             if damage:
-                self.do("{}s {}.".format(self.basic.s, self.target.name))
+                self.do("{} {}.".format(self.basic.s, self.target.name))
                 self.target.hit(self, damage)
             else:
                 self.do("misses {}.".format(self.target.name))
