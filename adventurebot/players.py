@@ -2,7 +2,8 @@ from verbs import Punch, Zap
 
 
 class Player(object):
-    def __init__(self, nickmask):
+    def __init__(self, master, nickmask):
+        self.master = master
         self.nickmask = nickmask
         self.name = nickmask.split("!", 1)[0]
         self.target = None
@@ -27,9 +28,6 @@ class Player(object):
             except KeyError:
                 pass
         return modifier
-
-    def say(self, text):
-        print('< {}> {}'.format(self.name, text))
 
     def do(self, act):
         print("* {} {}".format(self.name, act))
@@ -92,3 +90,7 @@ class Cleric(Player):
         self.fight -= 5
         self.cast += 10
         self.evade += 5
+
+
+roles = {"fighter": Fighter, "wizard": Wizard,
+         "thief": Thief, "cleric": Cleric}

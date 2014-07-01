@@ -15,7 +15,7 @@ class AdventureModule(Module):
     def start(self, *args, **kwargs):
         super(AdventureModule, self).start(*args, **kwargs)
         self.add_commands(self.controller.client)
-        self.master = AdventureMaster()
+        self.master = AdventureMaster(self.controller)
 
     def stop(self, *args, **kwargs):
         super(AdventureModule, self).stop(*args, **kwargs)
@@ -40,31 +40,13 @@ class AdventureModule(Module):
         try:
             role = args[0].lower().strip()
         except IndexError:
+            role = None
+        if not role or role not in players.roles:
             client.reply(recipient, actor,
-                         "Usage: create <class>. Available classes: "
+                         "Usage: create <role>. Available roles: "
                          "fighter, wizard, thief, cleric.")
             return True
-        if role == "fighter":
-            self.master.players[mask] = players.Fighter(mask)
-            client.reply(recipient, actor,
-                         "Created. Welcome, fighter {}!".format(nick))
-        elif role == "wizard":
-            self.master.players[mask] = players.Wizard(mask)
-            client.reply(recipient, actor,
-                         "Created. Welcome, wizard {}!".format(nick))
-        elif role == "thief":
-            self.master.players[mask] = players.Thief(mask)
-            client.reply(recipient, actor,
-                         "Created. Welcome, thief {}!".format(nick))
-        elif role == "cleric":
-            self.master.players[mask] = players.Cleric(mask)
-            client.reply(recipient, actor,
-                         "Created. Welcome, cleric {}!".format(nick))
-        else:
-            client.reply(recipient, actor,
-                         "Usage: create <class>. Available classes: "
-                         "fighter, wizard, thief, cleric.")
-        return True
+        self.master.create(actor, role)
 
 
 module = AdventureModule
