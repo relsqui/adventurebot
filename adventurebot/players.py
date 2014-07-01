@@ -30,7 +30,7 @@ class Player(object):
         return modifier
 
     def do(self, act):
-        print("* {} {}".format(self.name, act))
+        self.master.announce("{} {}".format(self.name, act))
 
     def auto(self):
         if self.target and self.basic:

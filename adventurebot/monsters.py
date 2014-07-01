@@ -1,20 +1,42 @@
+import logging
 from random import choice
+
+from kitnirc.client import Client
+
+
+_log = logging.getLogger(__name__)
 
 
 class Monster(object):
-    def __init__(self):
+    def __init__(self, master):
         self.nicks = ["MONSTER", "A_MONSTER", "BASIC_MONSTER"]
         self.name = self.nicks[0]
+        self.master = master
+        self.channel = self.master.channel
+        self.client = Client()
         self.health = 50
         self.damage = 10
         self.xp = 1
         self.targets = []
+        self.dead = False
+
+    def connect(self):
+        host = self.master.client.server.host
+        port = self.master.client.server.port
+        _log.info("Connecting {} to {}:{}.".format(self.name, host, port))
+        self.client.connect(self.name, host=host, port=port)
+        self.client.join(self.channel)
+
+    def quit(self, message=None):
+        if message == None:
+            message = "{} runs away.".format(self.name)
+        self.client.quit(message)
 
     def say(self, text):
-        print('< {}> {}'.format(self.name, text))
+        self.client.msg(self.channel, text)
 
     def do(self, act):
-        print("* {} {}".format(self.name, act))
+        self.client.emote(self.channel, text)
 
     def idle(self):
         self.do("stands around looking menacing.")
@@ -34,10 +56,8 @@ class Monster(object):
         self.health -= damage
         if self.health < 0:
             self.die()
-            return True
         else:
             self.show_hit()
-            return False
 
     def show_hit(self):
         self.say("Ow!")
@@ -46,7 +66,9 @@ class Monster(object):
         self.show_die()
         for target in self.targets:
             target.give_xp(self.xp)
+        self.quit("{} dies.".format(self.name))
+        self.dead = True
+
 
     def show_die(self):
         self.say("Arrrrrrgh!")
-        self.do("dies.")
