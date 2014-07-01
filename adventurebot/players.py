@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from verbs import Punch, Zap
 
 
