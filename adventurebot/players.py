@@ -20,6 +20,9 @@ class Player(object):
         self.full_health = 100
         self.health = 100
 
+    def give_xp(self, xp):
+        self.xp += xp
+
     def modifiers(self, stat):
         modifier = 0
         for slot in ["head", "torso", "weapon", "legs"]:
